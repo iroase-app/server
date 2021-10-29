@@ -15,6 +15,17 @@ describe('/register', () => {
     expect(res.statusCode).toEqual(201);
   });
 
+  it('should reject if there are missing fields', async () => {
+    const res = await supertest(app)
+      .post('/register')
+      .send({
+        username: 'Fo0bar',
+      });
+
+    expect(res.statusCode).toEqual(400);
+    expect(res.body.error).toEqual('You are missing a username, password, or both.');
+  });
+
   it('should reject username collisions', async () => {
     const res = await supertest(app)
       .post('/register')
