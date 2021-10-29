@@ -27,7 +27,7 @@ describe('/register', () => {
     expect(res.body.error).toEqual('This username already exists.');
   });
 
-  it('should usernames that aren\'t Aa-Zz 0-9 _', async () => {
+  it('should usernames that aren\'t Aa-Zz 0-9', async () => {
     const responses = [
       await supertest(app)
         .post('/register')
@@ -39,12 +39,6 @@ describe('/register', () => {
         .post('/register')
         .send({
           username: 'bad-username',
-          password: 'secure password',
-        }),
-      await supertest(app)
-        .post('/register')
-        .send({
-          username: 'bad_username;',
           password: 'secure password',
         }),
     ];
