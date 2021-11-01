@@ -23,7 +23,7 @@ describe('/register', () => {
       });
 
     expect(res.statusCode).toEqual(400);
-    expect(res.body.error).toEqual('You are missing a username, password, or both.');
+    expect(res.body.error).toEqual('fieldMissing');
   });
 
   it('should reject username collisions', async () => {
@@ -35,7 +35,7 @@ describe('/register', () => {
       });
 
     expect(res.statusCode).toEqual(409);
-    expect(res.body.error).toEqual('This username already exists.');
+    expect(res.body.error).toEqual('usernameCollision');
   });
 
   it('should reject usernames that aren\'t Aa-Zz 0-9', async () => {
@@ -56,7 +56,7 @@ describe('/register', () => {
 
     responses.forEach((response) => {
       expect(response.status).toEqual(400);
-      expect(response.body.error).toEqual('This username contains illegal characters.');
+      expect(response.body.error).toEqual('illegalCharacters');
     });
   });
 });
