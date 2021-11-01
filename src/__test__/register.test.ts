@@ -26,6 +26,9 @@ describe('/register', () => {
     expect(res.body.error).toEqual('fieldMissing');
   });
 
+  // TODO: Username length
+  // TODO: Password length
+
   it('should reject username collisions', async () => {
     const res = await supertest(app)
       .post('/register')
@@ -38,6 +41,7 @@ describe('/register', () => {
     expect(res.body.error).toEqual('usernameCollision');
   });
 
+  // TODO: should we really reject non A-Z characters?
   it('should reject usernames that aren\'t Aa-Zz 0-9', async () => {
     const responses = [
       await supertest(app)
