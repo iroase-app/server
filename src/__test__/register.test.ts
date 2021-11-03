@@ -26,9 +26,6 @@ describe('/register', () => {
     expect(res.body.error).toEqual('fieldMissing');
   });
 
-  // TODO: Username length
-  // TODO: Password length
-
   it('should reject usernames that are too long or too short', async () => {
     const tooLong = await supertest(app)
       .post('/register')
