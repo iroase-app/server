@@ -7,6 +7,10 @@ beforeEach(async () => {
   await db.init();
 });
 
+afterAll(async () => {
+  db.default.end();
+});
+
 describe('/register', () => {
   it('should accept a username and a password and send back a session token', async () => {
     const res = await supertest(app)
