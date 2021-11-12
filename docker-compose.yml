@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  db:
+    image: postgres:12.1
+    environment:
+      POSTGRES_USER: iroase
+      POSTGRES_DB: iroase
+    ports:
+        - "5432:5432"
+    volumes:
+        - ./postgresql/data:/var/lib/postgresql/data
+
+  iroaseserver:
+    image: iroaseserver
+    depends_on:
+        - db
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      PGHOST: db
+    ports:
+      - 3000:3000
+
+    restart: unless-stopped

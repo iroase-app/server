@@ -2,7 +2,7 @@ import { Pool } from 'pg';
 
 const db = new Pool({
   user: 'iroase',
-  database: 'iroase',
+  database: process.env.PGUSER || 'iroase',
 });
 
 /**
