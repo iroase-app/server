@@ -19,10 +19,12 @@ We use PostgreSQL for our database. The app tries to connect as the user `iroase
 
 ## Running and deploying
 
-```git clone https://github.com/iroase-app/server/```
+```
+yarn install
+```
 
-```yarn install```
-
-```yarn prod```
+```
+yarn prod
+```
 
 This will start up the docker containers needed.
