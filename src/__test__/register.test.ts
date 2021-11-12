@@ -58,68 +58,67 @@ describe('/register', () => {
     expect(tooShort.statusCode).toEqual(400);
     expect(tooShort.body.error).toEqual('usernameTooShort');
   });
-});
+  it('should reject if the password is too long or short', async () => {
+    const tooLong = await supertest(app)
+      .post('/register')
+      .send({
+        username: 'Fo0bar',
+        password: 'ThisIsAVeryLongPasswordItIsDefinitelyLongerThan128CharactersAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+      });
 
-it('should reject if the password is too long or short', async () => {
-  const tooLong = await supertest(app)
-    .post('/register')
-    .send({
-      username: 'Fo0bar',
-      password: 'ThisIsAVeryLongPasswordItIsDefinitelyLongerThan128CharactersAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-    });
+    const tooShort = await supertest(app)
+      .post('/register')
+      .send({
+        username: 'Fo0bar',
+        password: 'short',
+      });
 
-  const tooShort = await supertest(app)
-    .post('/register')
-    .send({
-      username: 'Fo0bar',
-      password: 'short',
-    });
+    expect(tooLong.statusCode).toEqual(400);
+    expect(tooLong.body.error).toEqual('passwordTooLong');
 
-  expect(tooLong.statusCode).toEqual(400);
-  expect(tooLong.body.error).toEqual('passwordTooLong');
+    expect(tooShort.statusCode).toEqual(400);
+    expect(tooShort.body.error).toEqual('passwordTooShort');
+  });
 
-  expect(tooShort.statusCode).toEqual(400);
-  expect(tooShort.body.error).toEqual('passwordTooShort');
-});
-
-it('should reject username collisions', async () => {
-  await supertest(app)
-    .post('/register')
-    .send({
-      username: 'UsernameAlreadyExists',
-      password: 'secure password',
-    });
-
-  const res = await supertest(app)
-    .post('/register')
-    .send({
-      username: 'UsernameAlreadyExists',
-      password: 'secure password',
-    });
-
-  expect(res.statusCode).toEqual(409);
-  expect(res.body.error).toEqual('usernameCollision');
-});
-
-// TODO: should we really reject non A-Z characters?
-it('should reject usernames that aren\'t Aa-Zz 0-9', async () => {
-  const responses = [
+  it('should reject username collisions', async () => {
     await supertest(app)
       .post('/register')
       .send({
-        username: 'badusername()',
+        username: 'UsernameAlreadyExists',
         password: 'secure password',
-      }),
-    await supertest(app)
+      });
+
+    const res = await supertest(app)
       .post('/register')
       .send({
-        username: 'bad-username',
+        username: 'UsernameAlreadyExists',
         password: 'secure password',
-      }),
-  ];
+      });
 
-  responses.forEach((response) => {
-    expect(response.status).toEqual(400);
-    expect(response.body.error).toEqual('illegalCharacters');
+    expect(res.statusCode).toEqual(409);
+    expect(res.body.error).toEqual('usernameCollision');
+  });
+
+  // TODO: should we really reject non A-Z characters?
+  it('should reject usernames that aren\'t Aa-Zz 0-9', async () => {
+    const responses = [
+      await supertest(app)
+        .post('/register')
+        .send({
+          username: 'badusername()',
+          password: 'secure password',
+        }),
+      await supertest(app)
+        .post('/register')
+        .send({
+          username: 'bad-username',
+          password: 'secure password',
+        }),
+    ];
+
+    responses.forEach((response) => {
+      expect(response.status).toEqual(400);
+      expect(response.body.error).toEqual('illegalCharacters');
+    });
   });
 });

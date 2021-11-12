@@ -13,6 +13,7 @@ services:
 
   iroaseserver:
     image: iroaseserver
+    command: yarn start
     depends_on:
         - db
     build:
