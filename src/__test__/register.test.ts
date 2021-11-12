@@ -1,5 +1,11 @@
 import supertest from 'supertest';
 import app from '../app';
+import * as db from '../db';
+
+beforeEach(async () => {
+  await db.reset();
+  await db.init();
+});
 
 describe('/register', () => {
   it('should accept a username and a password and send back a session token', async () => {
@@ -11,7 +17,7 @@ describe('/register', () => {
       });
 
     expect(res.body).toHaveProperty('session');
-    expect(res.body.username).toEqual('foobar');
+    expect(res.body.username).toEqual('Fo0bar');
     expect(res.statusCode).toEqual(201);
   });
 
@@ -20,6 +26,7 @@ describe('/register', () => {
       .post('/register')
       .send({
         username: 'Fo0bar',
+        password: '',
       });
 
     expect(res.statusCode).toEqual(400);
@@ -72,6 +79,13 @@ it('should reject if the password is too long or short', async () => {
 });
 
 it('should reject username collisions', async () => {
+  await supertest(app)
+    .post('/register')
+    .send({
+      username: 'UsernameAlreadyExists',
+      password: 'secure password',
+    });
+
   const res = await supertest(app)
     .post('/register')
     .send({
