@@ -1,15 +1,19 @@
 import argon2 from 'argon2';
 import supertest from 'supertest';
 import app from '../app';
-import db, { reset, init } from '../db';
+import * as db from '../db';
 
 beforeEach(async () => {
-  await reset();
-  await init();
-  await db.query(`
+  await db.reset();
+  await db.init();
+  await db.default.query(`
   INSERT INTO users (username, hashed_password, created, is_moderator) 
   VALUES ($1, $2, $3, $4);`,
   ['Test', await argon2.hash('very secure password'), new Date(), false]);
+});
+
+afterAll(async () => {
+  await db.default.end();
 });
 
 describe('/login', () => {
