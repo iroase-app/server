@@ -23,4 +23,4 @@ services:
       PGHOST: db
     ports:
       - 3000:3000
-    command: yarn jest
+    command: yarn jest -i
