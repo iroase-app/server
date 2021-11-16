@@ -15,13 +15,14 @@ function pass(password: string): string | true {
 
 export default function validate(req: Request, res: Response, next: Function) {
   if (!(req.body.username.length && req.body.password.length)) res.status(400).send({ error: 'fieldMissing' });
+  else {
+    const u = user(req.body.username);
+    const p = pass(req.body.password);
 
-  const u = user(req.body.username);
-  const p = pass(req.body.password);
-
-  if (u !== true) {
-    res.status(400).send({ error: u });
-  } else if (p !== true) {
-    res.status(400).send({ error: p });
-  } else next();
+    if (u !== true) {
+      res.status(400).send({ error: u });
+    } else if (p !== true) {
+      res.status(400).send({ error: p });
+    } else { next(); }
+  }
 }
