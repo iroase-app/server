@@ -30,7 +30,7 @@ function pass(password: string): string | true {
  * @param next Callback to run next
  */
 export default function validate(req: Request, res: Response, next: Function) {
-  if (!(req.body.username.length && req.body.password.length)) res.status(400).send({ error: 'fieldMissing' });
+  if (!(req.body.username && req.body.password)) res.status(400).send({ error: 'fieldMissing' });
   else {
     const u = user(req.body.username);
     const p = pass(req.body.password);
