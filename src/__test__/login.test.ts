@@ -36,11 +36,11 @@ describe('/login', () => {
     expect(res.status).toBe(400);
     expect(res.body.error).toBe('wrongCredentials');
 
-    res = await supertest(app).post('/login').send({ username: 'wrong username', password: 'very secure password' });
+    res = await supertest(app).post('/login').send({ username: 'wrongusername', password: 'very secure password' });
     expect(res.status).toBe(400);
     expect(res.body.error).toBe('wrongCredentials');
 
-    res = await supertest(app).post('/login').send({ username: 'wrong username', password: 'wrong password' });
+    res = await supertest(app).post('/login').send({ username: 'wrongUsername', password: 'wrong password' });
     expect(res.status).toBe(400);
     expect(res.body.error).toBe('wrongCredentials');
   });
@@ -49,5 +49,33 @@ describe('/login', () => {
     const res = await supertest(app).post('/login').send({ username: 'Test', password: 'very secure password' });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('session');
+  });
+
+  it('should check for illegal characters', async () => {
+    let res = await supertest(app).post('/login').send({ username: 'illegal!', password: 'very secure password' });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('illegalCharacters');
+
+    res = await supertest(app).post('/login').send({ username: 'illegal;', password: 'very secure password' });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('illegalCharacters');
+  });
+
+  it('should check for length', async () => {
+    let res = await supertest(app).post('/login').send({ username: 'a'.repeat(51), password: 'very secure password' });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('usernameTooLong');
+
+    res = await supertest(app).post('/login').send({ username: 'aaaa', password: 'very secure password'.repeat(300) });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('passwordTooLong');
+
+    res = await supertest(app).post('/login').send({ username: 'a', password: 'very secure password' });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('usernameTooShort');
+
+    res = await supertest(app).post('/login').send({ username: 'aaaa', password: 'a' });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('passwordTooShort');
   });
 });
