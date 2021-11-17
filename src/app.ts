@@ -1,6 +1,6 @@
 import express from 'express';
-import register from './api/register/register';
-import login from './api/login/login';
+import register from './api/register';
+import login from './api/login';
 
 const app = express();
 app.use(express.json());
