@@ -1,0 +1,1 @@
+Endpoints that are in this folder (/app) require a session to access.

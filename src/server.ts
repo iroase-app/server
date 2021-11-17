@@ -1,4 +1,4 @@
-import app from './app';
+import app from './loader';
 import * as db from './db';
 
 const PORT = process.env.PORT || 3000;

@@ -1,6 +1,6 @@
 import argon2 from 'argon2';
 import supertest from 'supertest';
-import app from '../app';
+import app from '../loader';
 import * as db from '../db';
 
 beforeEach(async () => {

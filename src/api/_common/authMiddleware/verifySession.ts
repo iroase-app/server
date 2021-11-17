@@ -7,7 +7,7 @@ import db from '../../../db';
  * @param res Express response object.
  * @param next Express next callback.
 */
-export default async function session(req: Request, res: Response, next: Function) {
+export default async function verifySession(req: Request, res: Response, next: Function) {
   if (!req.headers.authorization) return res.status(401).send({ error: 'unauthorized' });
   const user = await db.query(`
     SELECT (sessions.user_id, sessions.token, users.user_id, users.is_moderator)
