@@ -1,10 +1,10 @@
 import express from 'express';
 import verifySession from '../_common/authMiddleware/verifySession';
-import logout from './session/delete';
+import session from './session';
 
 const app = express.Router();
 app.use(verifySession);
 
-app.use('/logout', logout);
+app.use('/session', session);
 
 export default app;

@@ -8,19 +8,29 @@ import db from '../../../db';
  * @param next Express next callback.
 */
 export default async function verifySession(req: Request, res: Response, next: Function) {
-  if (!req.headers.authorization) return res.status(401).send({ error: 'unauthorized' });
-  const user = await db.query(`
-    SELECT (sessions.user_id, sessions.token, users.user_id, users.is_moderator)
-    FROM sessions
-    INNER JOIN users ON sessions.user_id = users.user_id
-    WHERE sessions.token = $1,
+  let token;
+  if (req.headers.authorization) {
+    token = req.headers.authorization?.split(' ')[1];
+  } else {
+    token = null;
+  }
+  if (!token) res.status(401).send({ error: 'noBearer' });
+  else {
+    const user = await db.query(`
+    SELECT users.user_id, username, "token", is_moderator
+    FROM users INNER JOIN sessions ON (users.user_id = sessions.user_id)
+    WHERE "token" = $1;
   `,
-  [req.headers.authorization]);
-  if (!user) return res.status(401).send({ error: 'unauthorized' });
-  req.user = {
-    id: user.rows[0].user_id,
-    isModerator: user.rows[0].is_moderator,
-    username: user.rows[0].username,
-  };
-  return next();
+    [token]);
+
+    if (!user.rows[0]) res.status(401).send({ error: 'unauthorized' });
+    else {
+      req.user = {
+        id: user.rows[0].user_id,
+        isModerator: user.rows[0].is_moderator,
+        username: user.rows[0].username,
+      };
+      next();
+    }
+  }
 }
