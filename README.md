@@ -23,6 +23,10 @@ We use PostgreSQL for our database. The app tries to connect as the user `iroase
 yarn install
 ```
 
+Edit the docker-compose.yml file and change the FRONTEND env to the origin of the frontend. Leaving it blank will set the CORS headers to "*", which is not recommended.
+
+Then:
+
 ```
 yarn prod
 ```

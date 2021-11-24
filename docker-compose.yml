@@ -22,6 +22,7 @@ services:
     environment:
       NODE_ENV: production
       PGHOST: db
+      FRONTEND: http://localhost:3001
     ports:
       - 3000:3000
 
