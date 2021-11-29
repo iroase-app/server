@@ -1,7 +1,7 @@
 import * as db from '../db';
 
 /**
- * Creates a test user for our tests to use.
+ * Cleans the DB and creates a test user for our tests to use.
  * The user has the username 'TestUser' and the token 'testToken'.
  * The user is not a moderator.
  * @returns {Promise<void>} A promise that resolves when everything is ready to go.
