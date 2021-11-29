@@ -55,7 +55,8 @@ export async function init() {
     "front" text NOT NULL,
     "back" text NOT NULL,
     "deck_id" INT NOT NULL,
-    CONSTRAINT "deck_id" FOREIGN KEY ("deck_id") REFERENCES decks("deck_id") ON DELETE CASCADE
+    CONSTRAINT "deck_id" FOREIGN KEY ("deck_id") REFERENCES decks("deck_id") ON DELETE CASCADE,
+    CONSTRAINT "cards_pk" PRIMARY KEY ("card_id")
   );
 
   CREATE TABLE IF NOT EXISTS card_events (
@@ -65,7 +66,8 @@ export async function init() {
     "date" timestamp NOT NULL,
     "confidence" INT NOT NULL,
     CONSTRAINT "card_id" FOREIGN KEY ("card_id") REFERENCES cards("card_id") ON DELETE CASCADE,
-    CONSTRAINT "user_id" FOREIGN KEY ("user_id") REFERENCES users("user_id") ON DELETE CASCADE
+    CONSTRAINT "user_id" FOREIGN KEY ("user_id") REFERENCES users("user_id") ON DELETE CASCADE,
+    CONSTRAINT "card_events_pk" PRIMARY KEY ("event_id")
   );
 
   CREATE INDEX IF NOT EXISTS "card_index" ON cards (
