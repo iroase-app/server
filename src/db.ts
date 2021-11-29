@@ -9,7 +9,7 @@ const db = new Pool({
  * Initialize the database.
  */
 export async function init() {
-  await db.query(`
+  await db.query(/* sql */`
   CREATE TABLE IF NOT EXISTS users (
     "user_id" INT GENERATED ALWAYS AS IDENTITY,
     username varchar NOT NULL,
@@ -28,6 +28,48 @@ export async function init() {
     "user_id" INT NOT NULL,
     CONSTRAINT sessions_pk PRIMARY KEY ("session_id"),
     CONSTRAINT "user_id" FOREIGN KEY ("user_id") REFERENCES users("user_id") ON DELETE CASCADE
+  );
+
+  CREATE TABLE IF NOT EXISTS decks (
+    "deck_id" INT GENERATED ALWAYS AS IDENTITY,
+    "name" varchar NOT NULL,
+    "course" varchar,
+    "public" boolean NOT NULL,
+    CONSTRAINT "decks_pk" PRIMARY KEY ("deck_id")
+  );
+
+  CREATE INDEX IF NOT EXISTS "deck_index" ON decks (
+    "name", "course", "public"
+  );
+
+  CREATE TABLE IF NOT EXISTS user_decks (
+    "user_id" INT NOT NULL,
+    "deck_id" INT NOT NULL,
+    PRIMARY KEY("user_id", "deck_id"),
+    CONSTRAINT "user_id" FOREIGN KEY ("user_id") REFERENCES users("user_id") ON DELETE CASCADE,
+    CONSTRAINT "deck_id" FOREIGN KEY ("deck_id") REFERENCES decks("deck_id") ON DELETE CASCADE
+  );
+
+  CREATE TABLE IF NOT EXISTS cards (
+    "card_id" INT GENERATED ALWAYS AS IDENTITY,
+    "front" text NOT NULL,
+    "back" text NOT NULL,
+    "deck_id" INT NOT NULL,
+    CONSTRAINT "deck_id" FOREIGN KEY ("deck_id") REFERENCES decks("deck_id") ON DELETE CASCADE
+  );
+
+  CREATE TABLE IF NOT EXISTS card_events (
+    "event_id" INT GENERATED ALWAYS AS IDENTITY,
+    "user_id" INT NOT NULL,
+    "card_id" INT NOT NULL,
+    "date" timestamp NOT NULL,
+    "confidence" INT NOT NULL,
+    CONSTRAINT "card_id" FOREIGN KEY ("card_id") REFERENCES cards("card_id") ON DELETE CASCADE,
+    CONSTRAINT "user_id" FOREIGN KEY ("user_id") REFERENCES users("user_id") ON DELETE CASCADE
+  );
+
+  CREATE INDEX IF NOT EXISTS "card_index" ON cards (
+    "front", "back", "deck_id"
   );
   `);
 }
