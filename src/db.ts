@@ -78,7 +78,7 @@ export async function init() {
  * Reset the database. This should only be used to ensure a clean state for our tests.
  */
 export async function reset() {
-  await db.query(`
+  await db.query(/* sql */ `
   DROP TABLE IF EXISTS users CASCADE;
   DROP TABLE IF EXISTS sessions CASCADE;
   `);

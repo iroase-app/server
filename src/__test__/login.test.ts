@@ -6,7 +6,7 @@ import * as db from '../db';
 beforeEach(async () => {
   await db.reset();
   await db.init();
-  await db.default.query(`
+  await db.default.query(/* sql */ `
   INSERT INTO users (username, hashed_password, created, is_moderator) 
   VALUES ($1, $2, $3, $4);`,
   ['Test', await argon2.hash('very secure password'), new Date(), false]);

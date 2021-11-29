@@ -7,10 +7,10 @@ import randomBytesP from '../_common/randomBytesP';
 const login = express.Router();
 
 login.post('/', validate, async (req, res) => {
-  const user = await db.query(
-    'SELECT user_id, hashed_password FROM users WHERE username = $1;',
-    [req.body.username],
-  );
+  const user = await db.query(/* sql */ `
+    SELECT user_id, hashed_password FROM users WHERE username = $1;
+    `,
+  [req.body.username]);
   if (!user.rows[0]) {
     /*
       * If the user doesn't exist, we don't want to leak information.
@@ -24,7 +24,7 @@ login.post('/', validate, async (req, res) => {
   const isValid = await argon2.verify(user.rows[0].hashed_password, req.body.password);
   if (isValid) {
     const token = (await randomBytesP(64)).toString('hex');
-    await db.query(`
+    await db.query(/* sql */ `
           INSERT INTO sessions ("user_id", "token", device, created)
           VALUES ($1, $2, $3, $4);
           `,

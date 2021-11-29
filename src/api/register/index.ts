@@ -13,7 +13,7 @@ register.post('/', validate, async (req, res) => {
   const client = await db.connect();
   try {
     await client.query('BEGIN');
-    const user = await client.query(`
+    const user = await client.query(/* sql */`
       INSERT INTO users (username, hashed_password, created, is_moderator) 
       VALUES ($1, $2, $3, $4) 
       RETURNING user_id;
@@ -21,7 +21,7 @@ register.post('/', validate, async (req, res) => {
     [req.body.username, await argon2.hash(req.body.password), new Date(), false]);
 
     const token = (await randomBytesP(64)).toString('hex');
-    await client.query(`
+    await client.query(/* sql */`
       INSERT INTO sessions ("user_id", "token", device, created)
       VALUES ($1, $2, $3, $4);
       `,

@@ -16,7 +16,7 @@ export default async function verifySession(req: Request, res: Response, next: F
   }
   if (!token) res.status(401).send({ error: 'noBearer' });
   else {
-    const user = await db.query(`
+    const user = await db.query(/* sql */ `
     SELECT users.user_id, username, "token", is_moderator
     FROM users INNER JOIN sessions ON (users.user_id = sessions.user_id)
     WHERE "token" = $1;

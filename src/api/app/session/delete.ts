@@ -10,7 +10,9 @@ logout.delete('/', async (req, res) => {
     * See ./src/api/_common/authMiddleware/verifySession.ts
   */
   const token = req.headers.authorization!.split(' ')[1];
-  await db.query('DELETE FROM sessions WHERE token = $1', [token]);
+  await db.query(/* sql */ `
+  DELETE FROM sessions WHERE token = $1
+  `, [token]);
   res.status(204).send();
 });
 
