@@ -1,22 +1,10 @@
 import supertest from 'supertest';
 import * as db from '../../db';
 import loader from '../../loader';
+import setupAuth from '../setupAuth';
 
 beforeEach(async () => {
-  await db.reset();
-  await db.init();
-  const user = await db.default.query(`
-  INSERT INTO users (username, hashed_password, created, is_moderator) 
-  VALUES ($1, $2, $3, $4)
-  RETURNING user_id
-  ;`,
-  ['TestUser', 'this should be a hash', new Date(), false]);
-
-  await db.default.query(`
-  INSERT INTO sessions ("user_id", "token", device, created)
-  VALUES ($1, $2, $3, $4);
-  `,
-  [user.rows[0].user_id, 'testToken', 'SAMSUNG Smart Toaster', new Date()]);
+  await setupAuth();
 });
 
 afterAll(async () => {
