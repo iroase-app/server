@@ -21,4 +21,16 @@ describe('creating a deck', () => {
     expect(res.status).toBe(400);
     expect(res.body.error).toBe('missingField');
   });
+
+  it('should reject names that are too long', async () => {
+    const res = await supertest(loader).post('/app/deck').send({ name: 'a'.repeat(100) }).set('Authorization', 'Bearer testToken');
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('nameTooLong');
+  });
+
+  it('should save the created deck to the database', async () => {
+    const res = await supertest(loader).post('/app/deck').send({ name: 'test' }).set('Authorization', 'Bearer testToken');
+    expect(res.status).toBe(201);
+    // TODO: this test case
+  });
 });
