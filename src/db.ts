@@ -34,8 +34,8 @@ export async function init() {
     "deck_id" INT GENERATED ALWAYS AS IDENTITY,
     "name" varchar NOT NULL,
     "course" varchar,
-    "public" boolean NOT NULL,
-    CONSTRAINT "decks_pk" PRIMARY KEY ("deck_id")
+    "public" boolean NOT NULL DEFAULT false,
+    CONSTRAINT decks_pk PRIMARY KEY ("deck_id")
   );
 
   CREATE INDEX IF NOT EXISTS "deck_index" ON decks (
@@ -45,7 +45,7 @@ export async function init() {
   CREATE TABLE IF NOT EXISTS user_decks (
     "user_id" INT NOT NULL,
     "deck_id" INT NOT NULL,
-    PRIMARY KEY("user_id", "deck_id"),
+    CONSTRAINT "user_decks_pk" PRIMARY KEY ("user_id", "deck_id"),
     CONSTRAINT "user_id" FOREIGN KEY ("user_id") REFERENCES users("user_id") ON DELETE CASCADE,
     CONSTRAINT "deck_id" FOREIGN KEY ("deck_id") REFERENCES decks("deck_id") ON DELETE CASCADE
   );
@@ -81,8 +81,12 @@ export async function init() {
  */
 export async function reset() {
   await db.query(/* sql */ `
-  DROP TABLE IF EXISTS users CASCADE;
-  DROP TABLE IF EXISTS sessions CASCADE;
+  DROP TABLE IF EXISTS "users" CASCADE;
+  DROP TABLE IF EXISTS "sessions" CASCADE;
+  DROP TABLE IF EXISTS "decks" CASCADE;
+  DROP TABLE IF EXISTS "user_decks" CASCADE;
+  DROP TABLE IF EXISTS "cards" CASCADE;
+  DROP TABLE IF EXISTS "card_events" CASCADE;
   `);
 }
 

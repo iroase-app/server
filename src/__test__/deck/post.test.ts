@@ -23,7 +23,7 @@ describe('creating a deck', () => {
   });
 
   it('should reject names that are too long', async () => {
-    const res = await supertest(loader).post('/app/deck').send({ name: 'a'.repeat(100) }).set('Authorization', 'Bearer testToken');
+    const res = await supertest(loader).post('/app/deck').send({ name: 'a'.repeat(101) }).set('Authorization', 'Bearer testToken');
     expect(res.status).toBe(400);
     expect(res.body.error).toBe('nameTooLong');
   });
@@ -31,6 +31,16 @@ describe('creating a deck', () => {
   it('should save the created deck to the database', async () => {
     const res = await supertest(loader).post('/app/deck').send({ name: 'test' }).set('Authorization', 'Bearer testToken');
     expect(res.status).toBe(201);
-    // TODO: this test case
+    const deck = await db.query('SELECT * FROM decks WHERE name = $1', ['test']);
+    expect(deck.rows[0].name).toBe('test');
+    const userDeck = await db.query(/* sql */ `
+    SELECT * FROM "user_decks"
+    JOIN "users" ON "user_decks"."user_id" = "users"."user_id"
+    WHERE "user_decks"."deck_id" = $1;
+    `,
+    [deck.rows[0].deck_id]);
+    expect(userDeck.rowCount).toBe(1);
+    expect(userDeck.rows[0].deck_id).toBe(res.body.deck.id);
+    expect(deck.rows[0].name).toBe(res.body.deck.name);
   });
 });
