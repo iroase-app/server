@@ -1,20 +1,16 @@
 import express from 'express';
+import db from '../../../db';
 import verifySession from '../../_common/authMiddleware/verifySession';
 
 const getDecks = express.Router();
 
-getDecks.get('/', verifySession, (req, res) => {
-  // TODO: Implement the route. This just makes the test pass.
-  res.status(200).send({
-    decks: [
-      {
-        id: 1,
-        name: 'foobar',
-        public: false,
-        course: null,
-      },
-    ],
-  });
+getDecks.get('/', verifySession, async (req, res) => {
+  const decks = await db.query(/* sql */ `
+  SELECT "decks"."deck_id", "decks"."name", "decks"."course", "decks"."public" FROM "decks", "user_decks"
+  JOIN "users" ON "user_decks"."user_id" = "users"."user_id"
+  WHERE "user_decks"."user_id" = $1`,
+  [req.user!.id]);
+  res.status(200).send({ decks: decks.rows });
 });
 
 export default getDecks;
