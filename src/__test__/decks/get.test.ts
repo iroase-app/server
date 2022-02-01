@@ -36,5 +36,6 @@ describe('/decks', () => {
     expect(res.body.decks[0].name).toBe('foobar');
     expect(res.body.decks[0].public).toBe(false);
     expect(res.body.decks[0].course).toBeNull();
+    expect(res.body.decks[0].deck_id).toBe(decks.rows[0].deck_id);
   });
 });
