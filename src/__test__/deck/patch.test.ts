@@ -60,7 +60,7 @@ describe('updating deck info', () => {
       .send({ name: 'newName', course: '9ST0' });
 
     expect(res.status).toBe(403);
-    expect(res.body.message).toBe('notOwner');
+    expect(res.body.error).toBe('notOwner');
 
     const notUpdatedDeck = await db.query(/* sql */ `
       SELECT * FROM decks WHERE deck_id = $1;`,
@@ -76,7 +76,7 @@ describe('updating deck info', () => {
       .send({ name: 'newName', course: '9ST0' });
 
     expect(res.status).toBe(404);
-    expect(res.body.message).toBe('deckNotFound');
+    expect(res.body.error).toBe('deckNotFound');
   });
 
   it('should not allow you to provide no data', async () => {
@@ -86,7 +86,7 @@ describe('updating deck info', () => {
       .send({});
 
     expect(res.status).toBe(400);
-    expect(res.body.message).toBe('noData');
+    expect(res.body.error).toBe('noData');
 
     const notUpdatedDeck = await db.query(/* sql */ `
       SELECT * FROM decks WHERE deck_id = $1;`,
