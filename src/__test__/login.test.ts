@@ -46,9 +46,10 @@ describe('/login', () => {
   });
 
   it('should return 200 and a session token if username and password combo is correct ', async () => {
-    const res = await supertest(loader).post('/login').send({ username: 'Test', password: 'very secure password' });
+    const res = await supertest.agent(loader).post('/login').send({ username: 'Test', password: 'very secure password' });
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('session');
+    expect(res.headers).toHaveProperty('set-cookie');
+    expect(res.headers['set-cookie'][0]).toMatch(/session=[a-f0-9]{128}; Path=\/; Secure; SameSite=Strict/);
   });
 
   it('should check for illegal characters', async () => {

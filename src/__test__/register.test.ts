@@ -13,14 +13,15 @@ afterAll(async () => {
 
 describe('/register', () => {
   it('should accept a username and a password and send back a session token', async () => {
-    const res = await supertest(loader)
+    const res = await supertest.agent(loader)
       .post('/register')
       .send({
         username: 'Fo0bar',
         password: 'secure password',
       });
 
-    expect(res.body).toHaveProperty('session');
+    expect(res.headers).toHaveProperty('set-cookie');
+    expect(res.headers['set-cookie'][0]).toMatch(/session=[a-f0-9]{128}; Path=\/; Secure; SameSite=Strict/);
     expect(res.body.username).toEqual('Fo0bar');
     expect(res.statusCode).toEqual(201);
   });

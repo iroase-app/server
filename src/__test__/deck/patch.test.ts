@@ -5,8 +5,9 @@ import loader from '../../loader';
 import setupAuth from '../setupAuth';
 
 const decks: QueryResult[] = [];
+let token: string;
 beforeEach(async () => {
-  await setupAuth();
+  token = await setupAuth();
   decks[0] = await db.query(/* sql */ `
     INSERT INTO decks ("name", "public", "course")
     VALUES ($1, $2, $3)
@@ -39,7 +40,7 @@ describe('updating deck info', () => {
   it('should allow you to change the info of decks that belong to you', async () => {
     const res = await supertest(loader)
       .patch(`/app/deck/${decks[0].rows[0].deck_id}`)
-      .set('Authorization', 'Bearer testToken')
+      .set('Cookie', [`session=${token}`])
       .send({ name: 'newName', course: '9ST0' });
 
     expect(res.status).toBe(200);
@@ -56,7 +57,7 @@ describe('updating deck info', () => {
   it('should not allow you to change the info of decks that do not belong to you', async () => {
     const res = await supertest(loader)
       .patch(`/app/deck/${decks[1].rows[0].deck_id}`)
-      .set('Authorization', 'Bearer testToken')
+      .set('Cookie', [`session=${token}`])
       .send({ name: 'newName', course: '9ST0' });
 
     expect(res.status).toBe(403);
@@ -72,7 +73,7 @@ describe('updating deck info', () => {
   it('should not allow you to change the info of decks that do not exist', async () => {
     const res = await supertest(loader)
       .patch('/app/deck/000')
-      .set('Authorization', 'Bearer testToken')
+      .set('Cookie', [`session=${token}`])
       .send({ name: 'newName', course: '9ST0' });
 
     expect(res.status).toBe(404);
@@ -82,7 +83,7 @@ describe('updating deck info', () => {
   it('should not allow you to provide no data', async () => {
     const res = await supertest(loader)
       .patch(`/app/deck/${decks[0].rows[0].deck_id}`)
-      .set('Authorization', 'Bearer testToken')
+      .set('Cookie', [`session=${token}`])
       .send({});
 
     expect(res.status).toBe(400);

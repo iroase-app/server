@@ -3,8 +3,9 @@ import * as db from '../../db';
 import loader from '../../loader';
 import setupAuth from '../setupAuth';
 
+let token: string;
 beforeEach(async () => {
-  await setupAuth();
+  token = await setupAuth();
 });
 
 afterAll(async () => {
@@ -15,7 +16,7 @@ describe('return meta information about the user', () => {
   it('should return the user meta information', async () => {
     const res = await supertest(loader)
       .get('/app/session')
-      .set('Authorization', 'Bearer testToken');
+      .set('Cookie', [`session=${token}`]);
 
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({
@@ -26,16 +27,15 @@ describe('return meta information about the user', () => {
   it('should reject if session is missing or invalid', async () => {
     let res = await supertest(loader)
       .get('/app/session')
-      .set('Authorization', 'Bearer invalidToken');
+      .set('Cookie', ['session=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa']);
 
     expect(res.status).toBe(401);
     expect(res.body.error).toBe('unauthorized');
 
     res = await supertest(loader)
-      .get('/app/session')
-      .set('Authorization', 'Bearer ');
+      .get('/app/session');
 
     expect(res.status).toBe(401);
-    expect(res.body.error).toBe('noBearer');
+    expect(res.body.error).toBe('noSession');
   });
 });

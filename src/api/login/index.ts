@@ -29,7 +29,8 @@ login.post('/', validate, async (req, res) => {
           VALUES ($1, $2, $3, $4);
           `,
     [user.rows[0].user_id, token, `${req.useragent?.os}: ${req.useragent?.browser}`, new Date()]);
-    return res.send({ session: token, username: req.body.username });
+    res.cookie('session', token, { secure: true, sameSite: 'strict' });
+    return res.send({ username: req.body.username });
   }
   return res.status(400).send({ error: 'wrongCredentials' });
 });

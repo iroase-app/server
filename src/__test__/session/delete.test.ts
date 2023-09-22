@@ -3,8 +3,9 @@ import * as db from '../../db';
 import loader from '../../loader';
 import setupAuth from '../setupAuth';
 
+let token: string;
 beforeEach(async () => {
-  await setupAuth();
+  token = await setupAuth();
 });
 
 afterAll(async () => {
@@ -15,7 +16,7 @@ describe('logging out', () => {
   it('should delete a session', async () => {
     const res = await supertest(loader)
       .delete('/app/session')
-      .set('Authorization', 'Bearer testToken')
+      .set('Cookie', [`session=${token}`])
       .send();
 
     expect(res.status).toBe(204);

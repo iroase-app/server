@@ -9,12 +9,12 @@ import db from '../../../db';
 */
 export default async function verifySession(req: Request, res: Response, next: Function) {
   let token;
-  if (req.headers.authorization) {
-    token = req.headers.authorization?.split(' ')[1];
+  if (req.cookies.session) {
+    token = req.cookies.session;
   } else {
     token = null;
   }
-  if (!token) res.status(401).send({ error: 'noBearer' });
+  if (!token) res.status(401).send({ error: 'noSession' });
   else {
     const user = await db.query(/* sql */ `
     SELECT users.user_id, username, "token", is_moderator
