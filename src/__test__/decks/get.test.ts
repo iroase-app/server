@@ -5,9 +5,10 @@ import loader from '../../loader';
 import setupAuth from '../setupAuth';
 
 let decks: QueryResult;
+let token: string;
 
 beforeEach(async () => {
-  await setupAuth();
+  token = await setupAuth();
   decks = await db.query(/* sql */ `
     INSERT INTO decks ("name", "public", "course")
     VALUES ($1, $2, $3)
@@ -29,7 +30,7 @@ describe('/decks', () => {
   it('should provide a list of a user\'s decks', async () => {
     const res = await supertest(loader)
       .get('/app/decks')
-      .set('Authorization', 'Bearer testToken')
+      .set('Cookie', [`session=${token}`])
       .expect(200);
 
     expect(res.body.decks).toHaveLength(1); // only foobar; not someone elses deck.

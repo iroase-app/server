@@ -13,9 +13,9 @@ import * as db from '../db';
  *
  * Use this user to mock things that belong to other accounts that the test user
  * should not be able to access.
- * @returns {Promise<void>} A promise that resolves when everything is ready to go.
+ * @returns {Promise<void>} A promise that resolves wwith the token when ready to go.
  */
-async function setupAuth(): Promise<void> {
+async function setupAuth(): Promise<string> {
   await db.reset();
   await db.init();
   const user = await db.default.query(`
@@ -24,12 +24,12 @@ async function setupAuth(): Promise<void> {
   RETURNING user_id
   ;`,
   ['TestUser', 'this should be a hash', new Date(), false]);
-
+  const testToken = 'testToken';
   await db.default.query(`
   INSERT INTO sessions ("user_id", "token", device, created)
   VALUES ($1, $2, $3, $4);
   `,
-  [user.rows[0].user_id, 'testToken', 'SAMSUNG Smart Toaster', new Date()]);
+  [user.rows[0].user_id, testToken, 'SAMSUNG Smart Toaster', new Date()]);
 
   // I know this is scuffed.
   await db.default.query(/* sql */ `
@@ -37,7 +37,7 @@ async function setupAuth(): Promise<void> {
   OVERRIDING SYSTEM VALUE VALUES (999, 'someoneElse', 'this should be a hash', '2020-01-01', false);
 `);
 
-  return Promise.resolve();
+  return Promise.resolve(testToken);
 }
 
 export default setupAuth;

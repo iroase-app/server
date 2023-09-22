@@ -28,8 +28,8 @@ register.post('/', validate, async (req, res) => {
     [user.rows[0].user_id, token, `${req.useragent?.os}: ${req.useragent?.browser}`, new Date()]);
 
     await client.query('COMMIT');
-
-    res.status(201).send({ session: token, username: req.body.username });
+    res.cookie('session', token, { secure: true, sameSite: 'strict' });
+    res.status(201).send({ username: req.body.username });
   } catch (e) {
     if (e instanceof DatabaseError && e.code === '23505') res.status(409).send({ error: 'usernameCollision' });
     else {

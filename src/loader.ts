@@ -1,11 +1,13 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import register from './api/register';
 import login from './api/login';
 import app from './api/app';
 
 const loader = express();
 loader.use(express.json());
+loader.use(cookieParser());
 
 const headers = (req: Request, res: Response, next: Function) => {
   res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND || '*');
