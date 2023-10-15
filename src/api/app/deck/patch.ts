@@ -1,9 +1,9 @@
 import express from 'express';
 import db from '../../../db';
 
-const updateDeck = express.Router();
+const patch = express.Router();
 
-updateDeck.patch('/:id', async (req, res) => {
+patch.patch('/:id', async (req, res) => {
   if (!req.body.name && !req.body.course && !req.body.public) return res.status(400).send({ error: 'noData' });
   const deck = await db.query(/* sql */ `
     SELECT * FROM user_decks WHERE deck_id = $1;
@@ -40,4 +40,4 @@ updateDeck.patch('/:id', async (req, res) => {
   }
 });
 
-export default updateDeck;
+export default patch;

@@ -1,10 +1,10 @@
 import express from 'express';
 import create from './post';
-import updateDeck from './patch';
+import patch from './patch';
 
 const deck = express.Router();
 
 deck.use('/', create);
-deck.use('/', updateDeck);
+deck.use('/', patch);
 
 export default deck;
