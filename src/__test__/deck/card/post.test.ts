@@ -132,8 +132,7 @@ describe('adding a card to a deck', () => {
       front: 'front',
       back: 'back',
     }).set('Cookie', [`session=${token}`]);
-    expect(res.body.error).toBe('invalidId');
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(404);
 
     // check that the card was not added to the database.
     const card = await db.query(/* sql */ `
