@@ -55,23 +55,15 @@ export async function init() {
     "front" text NOT NULL,
     "back" text NOT NULL,
     "deck_id" INT NOT NULL,
+    "due" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "pulled" INT NOT NULL DEFAULT 0,
+    "forgotten" INT NOT NULL DEFAULT 0,
     CONSTRAINT "deck_id" FOREIGN KEY ("deck_id") REFERENCES decks("deck_id") ON DELETE CASCADE,
     CONSTRAINT "cards_pk" PRIMARY KEY ("card_id")
   );
 
-  CREATE TABLE IF NOT EXISTS card_events (
-    "event_id" INT GENERATED ALWAYS AS IDENTITY,
-    "user_id" INT NOT NULL,
-    "card_id" INT NOT NULL,
-    "date" timestamp NOT NULL,
-    "confidence" INT NOT NULL,
-    CONSTRAINT "card_id" FOREIGN KEY ("card_id") REFERENCES cards("card_id") ON DELETE CASCADE,
-    CONSTRAINT "user_id" FOREIGN KEY ("user_id") REFERENCES users("user_id") ON DELETE CASCADE,
-    CONSTRAINT "card_events_pk" PRIMARY KEY ("event_id")
-  );
-
   CREATE INDEX IF NOT EXISTS "card_index" ON cards (
-    "front", "back", "deck_id"
+    "front", "back", "deck_id", "due"
   );
   `);
 }
