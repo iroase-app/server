@@ -10,7 +10,7 @@ get.get('/:id', async (req, res) => {
     return;
   }
   const deck = await db.query(/* sql */ `
-  SELECT "name", "course", "public" FROM "decks"
+  SELECT "name", "course", "public", "user_decks"."deck_id" FROM "decks"
   JOIN "user_decks" ON "decks"."deck_id" = "user_decks"."deck_id"
   WHERE "user_decks"."deck_id" = $1 AND "user_decks"."user_id" = $2;
   `, [req.params.id, req.user!.id]);
